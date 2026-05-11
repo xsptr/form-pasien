@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar Pasien — RSIA Bunda Aisyah</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:        #2AACAC;
+    --teal-light:  #3DC8C8;
+    --teal-dark:   #1A8585;
+    --teal-pale:   #E8F7F7;
+    --teal-border: rgba(42,172,172,0.2);
+    --pink:        #E0457B;
+    --pink-light:  #F06090;
+    --pink-pale:   #FEF0F5;
+    --pink-border: rgba(224,69,123,0.2);
+    --white:       #FFFFFF;
+    --bg:          #F5FAFA;
+    --surface:     #FFFFFF;
+    --border:      #D8EEEE;
+    --text:        #1A3333;
+    --text-muted:  #6A9898;
+    --success:     #1A8A5A;
+    --success-bg:  #E6F7F0;
+    --success-border:#A3D9BF;
+    --danger:      #D63B5A;
+    --danger-bg:   #FDEEF2;
+    --danger-border:#F0ABBE;
+  }
+ 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+  }
+ 
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 0%, rgba(42,172,172,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 90% 100%, rgba(224,69,123,0.06) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+ 
+  .container { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; padding: 36px 20px 72px; }
+ 
+  /* ── HEADER ── */
+  .header {
+    text-align: center; margin-bottom: 28px;
+    animation: fadeDown 0.6s ease both;
+  }
+ 
+  .logo-wrap {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 72px; height: 72px; border-radius: 20px;
+    background: linear-gradient(135deg, var(--teal), var(--teal-light));
+    box-shadow: 0 8px 24px rgba(42,172,172,0.28);
+    margin-bottom: 16px; font-size: 32px;
+  }
+ 
+  .header-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--teal-dark); border: 1.5px solid var(--teal-border);
+    padding: 5px 14px; border-radius: 100px; margin-bottom: 14px;
+    background: var(--teal-pale); font-weight: 700;
+  }
+ 
+  h1 {
+    font-size: clamp(24px, 5vw, 36px); font-weight: 900;
+    line-height: 1.15; color: var(--text); margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+ 
+  h1 .accent { color: var(--teal); }
+  h1 .accent2 { color: var(--pink); }
+ 
+  .header-sub { color: var(--text-muted); font-size: 14px; line-height: 1.6; font-weight: 500; }
+ 
+  .divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 18px auto 0; max-width: 200px;
+  }
+  .divider-line { flex: 1; height: 2px; border-radius: 2px; }
+  .divider-line.teal { background: linear-gradient(90deg, transparent, var(--teal)); }
+  .divider-line.pink { background: linear-gradient(90deg, var(--pink), transparent); }
+  .divider-dot { width: 7px; height: 7px; background: var(--pink); border-radius: 50%; flex-shrink: 0; }
+ 
+  /* ── TANGGAL ── */
+  .date-strip {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 12px 18px; margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    animation: fadeDown 0.6s ease 0.06s both;
+    box-shadow: 0 2px 12px rgba(42,172,172,0.06);
+  }
+  .date-left { display: flex; align-items: center; gap: 10px; }
+  .date-icon { font-size: 20px; }
+  .date-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 2px; }
+  .date-val { font-size: 13.5px; font-weight: 800; color: var(--text); }
+  .time-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; color: var(--teal); background: var(--teal-pale); padding: 6px 14px; border-radius: 10px; border: 1.5px solid var(--teal-border); letter-spacing: 1px; }
+ 
+  /* ── PROGRESS ── */
+  .form-progress { margin-bottom: 18px; animation: fadeDown 0.6s ease 0.1s both; }
+  .form-progress-header { display: flex; justify-content: space-between; margin-bottom: 7px; }
+  .form-progress-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+  .form-progress-count { font-size: 12px; color: var(--teal-dark); font-weight: 800; }
+  .form-progress-bar { height: 5px; background: var(--border); border-radius: 100px; overflow: hidden; }
+  .form-progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--teal-light), var(--pink)); border-radius: 100px; transition: width 0.4s ease; width: 0%; }
+ 
+  /* ── FORM CARDS ── */
+  .form-section { display: flex; flex-direction: column; gap: 14px; animation: fadeDown 0.6s ease 0.12s both; }
+ 
+  .form-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 18px; padding: 18px 20px;
+    position: relative; overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    box-shadow: 0 2px 10px rgba(42,172,172,0.04);
+  }
+  .form-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    border-radius: 4px 0 0 4px; opacity: 0; transition: opacity 0.3s;
+  }
+  .form-card.nama-card::before    { background: linear-gradient(180deg, var(--teal), var(--teal-light)); }
+  .form-card.status-card::before  { background: linear-gradient(180deg, var(--pink), var(--pink-light)); }
+  .form-card.ket-card::before     { background: linear-gradient(180deg, var(--teal-dark), var(--teal)); }
+ 
+  .form-card.focused {
+    border-color: rgba(42,172,172,0.4);
+    box-shadow: 0 4px 20px rgba(42,172,172,0.1);
+  }
+  .form-card.focused::before { opacity: 1; }
+  .form-card.filled { border-color: rgba(42,172,172,0.25); }
+  .form-card.filled::before { opacity: 0.6; }
+  .form-card.error { border-color: rgba(214,59,90,0.4); box-shadow: 0 4px 16px rgba(214,59,90,0.07); }
+  .form-card.error::before { background: var(--danger) !important; opacity: 1; }
+ 
+  .field-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    font-weight: 800; margin-bottom: 3px;
+  }
+  .nama-card .field-label  { color: var(--teal-dark); }
+  .status-card .field-label{ color: var(--pink); }
+  .ket-card .field-label   { color: var(--teal-dark); }
+ 
+  .field-title {
+    font-size: 15px; font-weight: 800; color: var(--text);
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .field-icon { font-size: 16px; }
+  .required { color: var(--danger); margin-left: 2px; font-size: 14px; }
+ 
+  input[type="text"], textarea, select {
+    width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+    color: var(--text); font-family: 'Nunito', sans-serif; font-size: 15px;
+    font-weight: 600; padding: 11px 15px; border-radius: 12px; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--teal-light);
+    box-shadow: 0 0 0 3px rgba(42,172,172,0.12);
+    background: var(--white);
+  }
+  input::placeholder, textarea::placeholder { color: #A8C8C8; font-weight: 500; }
+  input.has-error, textarea.has-error, select.has-error { border-color: rgba(214,59,90,0.5); }
+ 
+  select {
+    appearance: none; -webkit-appearance: none; cursor: pointer;
+    padding-right: 42px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%232AACAC' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+  }
+  select option { background: #fff; color: var(--text); font-weight: 600; }
+  select option[value=""] { color: #A8C8C8; }
+ 
+  textarea { resize: vertical; min-height: 88px; line-height: 1.6; }
+ 
+  .field-error { font-size: 12px; color: var(--danger); margin-top: 6px; display: none; font-weight: 600; }
+  .field-error.show { display: block; }
+ 
+  /* Petunjuk konversi ke dropdown */
+  .dropdown-hint {
+    margin-top: 10px; padding: 10px 14px;
+    background: rgba(42,172,172,0.06); border: 1px dashed rgba(42,172,172,0.35);
+    border-radius: 10px; font-size: 11.5px; color: var(--text-muted);
+    font-weight: 600; line-height: 1.6;
+  }
+  .dropdown-hint strong { color: var(--teal-dark); }
+  .dropdown-hint code {
+    font-family: 'DM Mono', monospace; background: rgba(42,172,172,0.1);
+    color: var(--teal-dark); padding: 1px 6px; border-radius: 5px;
+    font-size: 11px;
+  }
+ 
+  /* ── SUBMIT ── */
+  .submit-btn {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal), var(--teal-light));
+    color: #fff; font-family: 'Nunito', sans-serif; font-size: 15px;
+    font-weight: 800; letter-spacing: 0.3px; border: none; border-radius: 16px;
+    cursor: pointer; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    margin-top: 8px; box-shadow: 0 6px 24px rgba(42,172,172,0.35);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    animation: fadeDown 0.6s ease 0.22s both;
+  }
+  .submit-btn:hover:not(:disabled) { opacity: 0.92; transform: translateY(-2px); box-shadow: 0 10px 32px rgba(42,172,172,0.4); }
+  .submit-btn:disabled { opacity: 0.38; cursor: not-allowed; transform: none; box-shadow: none; }
+  .submit-hint { text-align: center; font-size: 12.5px; color: var(--text-muted); margin-top: 10px; transition: color 0.3s; font-weight: 600; animation: fadeDown 0.6s ease 0.26s both; }
+ 
+  .spinner { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+ 
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    border-radius: 14px; padding: 13px 24px; font-size: 14px; font-weight: 700;
+    color: #fff; box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 999; white-space: nowrap; max-width: 90vw; text-align: center;
+    background: var(--text);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error   { background: var(--danger); }
+  .toast.success { background: var(--success); }
+ 
+  /* ── SUCCESS ── */
+  .success-screen { display: none; text-align: center; padding: 50px 20px; animation: fadeUp 0.6s ease both; }
+ 
+  .success-icon-wrap {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 90px; height: 90px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal-pale), var(--success-bg));
+    border: 3px solid var(--success-border);
+    font-size: 44px; margin-bottom: 20px;
+    animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s both;
+  }
+ 
+  .success-title { font-size: 28px; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+  .success-title .accent { color: var(--teal); }
+  .success-sub { color: var(--text-muted); font-size: 14px; line-height: 1.65; margin-bottom: 24px; font-weight: 600; }
+ 
+  .success-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 18px; padding: 6px 22px;
+    margin: 0 auto 20px; max-width: 440px; text-align: left;
+    box-shadow: 0 4px 16px rgba(42,172,172,0.07);
+  }
+  .success-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; gap: 12px; }
+  .success-row:last-child { border-bottom: none; }
+  .success-row-label { color: var(--text-muted); font-weight: 700; flex-shrink: 0; }
+  .success-row-val { color: var(--text); font-weight: 800; text-align: right; }
+  .success-row.hl .success-row-val { color: var(--teal-dark); }
+ 
+  .success-note {
+    background: var(--success-bg); border: 1.5px solid var(--success-border);
+    border-radius: 14px; padding: 13px 18px; font-size: 13.5px;
+    color: var(--success); max-width: 440px; margin: 0 auto; line-height: 1.6; font-weight: 700;
+  }
+ 
+  .action-btns { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+ 
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 2px solid var(--border);
+    color: var(--teal-dark); font-family: 'Nunito', sans-serif;
+    font-size: 13.5px; font-weight: 800; padding: 10px 22px;
+    border-radius: 100px; cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  }
+  .btn-outline:hover { border-color: var(--teal-light); box-shadow: 0 4px 16px rgba(42,172,172,0.12); transform: translateY(-1px); }
+  .btn-outline.pink { color: var(--pink); border-color: var(--pink-border); }
+  .btn-outline.pink:hover { border-color: var(--pink); box-shadow: 0 4px 16px rgba(224,69,123,0.12); }
+ 
+  /* ── FOOTER ── */
+  .footer-brand { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); animation: fadeDown 0.6s ease 0.3s both; }
+  .footer-logo { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); font-weight: 700; }
+  .footer-heart { color: var(--pink); font-size: 14px; }
+ 
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp   { from { opacity: 0; transform: translateY(18px);  } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pop      { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+ 
+  @media (max-width: 480px) {
+    .container { padding: 24px 14px 60px; }
+    .form-card { padding: 16px; }
+    .date-strip { flex-direction: column; align-items: flex-start; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ══ FORM VIEW ══ -->
+  <div id="formView">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-wrap">&#129657;</div>
+      <div class="header-badge">&#128203; Pencatatan Pasien</div>
+      <h1>Daftar <span class="accent">Pasien</span><br><span class="accent2">Baru</span></h1>
+      <p class="header-sub">RSIA Bunda Aisyah Tasikmalaya<br>Sahabat Kesehatan Bunda &amp; Buah Hati</p>
+      <div class="divider">
+        <div class="divider-line teal"></div>
+        <div class="divider-dot"></div>
+        <div class="divider-line pink"></div>
+      </div>
+    </div>
+
+    <!-- Tanggal & Jam -->
+    <div class="date-strip">
+      <div class="date-left">
+        <span class="date-icon">&#128197;</span>
+        <div>
+          <div class="date-label">Tanggal Pencatatan</div>
+          <div class="date-val" id="dateVal">—</div>
+        </div>
+      </div>
+      <div class="time-val" id="timeVal">—</div>
+    </div>
+
+    <!-- Progress -->
+    <div class="form-progress">
+      <div class="form-progress-header">
+        <span class="form-progress-label">Kelengkapan data</span>
+        <span class="form-progress-count" id="progressCount">0 / 3</span>
+      </div>
+      <div class="form-progress-bar">
+        <div class="form-progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <!-- Fields -->
+    <div class="form-section">
+
+      <!-- Nama Pasien -->
+      <div class="form-card nama-card" id="cardNama">
+        <div class="field-label">Data Pasien</div>
+        <div class="field-title">
+          <span class="field-icon">&#128100;</span>
+          Nama Pasien <span class="required">*</span>
+        </div>
+        <input type="text" id="inputNama" placeholder="Tulis nama lengkap pasien"
+          oninput="onInput('nama')"
+          onfocus="setFocused('cardNama')" onblur="clearFocused('cardNama')" />
+        <div class="field-error" id="errNama">Nama pasien tidak boleh kosong</div>
+      </div>
+
+      <!-- Status -->
+      <div class="form-card status-card" id="cardStatus">
+        <div class="field-label">Status Pasien</div>
+        <div class="field-title">
+          <span class="field-icon">&#128203;</span>
+          Status <span class="required">*</span>
+        </div>
+        <!-- <input type="text" id="inputStatus" placeholder="Contoh: Rawat Inap, Rawat Jalan, IGD..."
+          oninput="onInput('status')"
+          onfocus="setFocused('cardStatus')" onblur="clearFocused('cardStatus')" /> -->
+        <select id="inputStatus" onchange="onInput('status')" onfocus="setFocused('cardStatus')" onblur="clearFocused('cardStatus')">
+          <option value="">— Pilih status pasien —</option>
+          <option value="Rawat Inap">Rawat Inap</option>
+          <option value="Rawat Jalan">Rawat Jalan</option>
+          <option value="Visite">Visite</option>
+          <option value="Pre-OP">Pre-OP</option>
+        </select>
+        <div class="field-error" id="errStatus">Status pasien tidak boleh kosong</div>
+
+        <!-- Petunjuk konversi ke dropdown -->
+        <!-- <div class="dropdown-hint">
+          &#128161; <strong>Ingin ubah ke dropdown?</strong> Ganti tag <code>&lt;input type="text"&gt;</code> di atas dengan:
+          <br><code>&lt;select id="inputStatus" onchange="onInput('status')"&gt;</code>
+          <br><code>&nbsp;&nbsp;&lt;option value=""&gt;— Pilih status —&lt;/option&gt;</code>
+          <br><code>&nbsp;&nbsp;&lt;option value="Rawat Inap"&gt;Rawat Inap&lt;/option&gt;</code>
+          <br><code>&nbsp;&nbsp;&lt;option value="Rawat Jalan"&gt;Rawat Jalan&lt;/option&gt;</code>
+          <br><code>&nbsp;&nbsp;&lt;option value="IGD"&gt;IGD&lt;/option&gt;</code>
+          <br><code>&nbsp;&nbsp;&lt;option value="Kontrol"&gt;Kontrol&lt;/option&gt;</code>
+          <br><code>&lt;/select&gt;</code>
+          <br>Lalu update fungsi <code>onInput('status')</code> menggunakan <code>.value</code> dari select.
+        </div> -->
+      </div>
+
+      <!-- Keterangan -->
+      <div class="form-card ket-card" id="cardKeterangan">
+        <div class="field-label">Informasi Tambahan</div>
+        <div class="field-title">
+          <span class="field-icon">&#128221;</span>
+          Keterangan <span class="required">*</span>
+        </div>
+        <textarea id="inputKeterangan" placeholder="Tulis keterangan tambahan mengenai pasien..."
+          oninput="onInput('keterangan')"
+          onfocus="setFocused('cardKeterangan')" onblur="clearFocused('cardKeterangan')"></textarea>
+        <div class="field-error" id="errKeterangan">Keterangan tidak boleh kosong</div>
+      </div>
+
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()" disabled>
+      <span class="spinner" id="spinner"></span>
+      <span id="submitLabel">Simpan Data Pasien &#129657;</span>
+    </button>
+    <p class="submit-hint" id="submitHint">Lengkapi semua isian untuk menyimpan data</p>
+
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <span class="footer-heart">&#9829;</span>
+        RSIA Bunda Aisyah Tasikmalaya
+        <span class="footer-heart">&#9829;</span>
+      </div>
+    </div>
+  </div><!-- /formView -->
+
+  <!-- ══ SUCCESS VIEW ══ -->
+  <div id="successView" class="success-screen">
+    <div class="success-icon-wrap">&#10003;</div>
+    <div class="success-title">Data <span class="accent">Tersimpan!</span></div>
+    <p class="success-sub">Data pasien berhasil dicatat dan<br>otomatis masuk ke spreadsheet. &#129657;</p>
+    <div class="success-card" id="successDetail"></div>
+    <div class="success-note">
+      &#128276;&nbsp; Data pasien telah tersimpan dengan aman.
+    </div>
+    <div class="action-btns">
+      <button class="btn-outline" onclick="resetForm()">&#43; Pasien Berikutnya</button>
+    </div>
+  </div>
+
+</div><!-- /container -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* <![CDATA[ */
+// ============================================================
+// KONFIGURASI
+// ============================================================
+var SHEET_URL = "GANTI_DENGAN_WEB_APP_URL";
+
+// ============================================================
+// STATE
+// ============================================================
+var isSubmitting = false;
+
+// ============================================================
+// REALTIME CLOCK
+// ============================================================
+function updateDateTime() {
+  var now    = new Date();
+  var days   = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+  var months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+  var dateStr = days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear();
+  var hh = String(now.getHours()).padStart(2, "0");
+  var mm = String(now.getMinutes()).padStart(2, "0");
+  var ss = String(now.getSeconds()).padStart(2, "0");
+  document.getElementById("dateVal").textContent = dateStr;
+  document.getElementById("timeVal").textContent = hh + ":" + mm + ":" + ss;
+}
+updateDateTime();
+setInterval(updateDateTime, 1000);
+
+// ============================================================
+// CARD FOCUS
+// ============================================================
+function setFocused(id)   { document.getElementById(id).classList.add("focused"); }
+function clearFocused(id) { setTimeout(function() { document.getElementById(id).classList.remove("focused"); }, 150); }
+
+// ============================================================
+// INPUT HANDLER
+// ============================================================
+function onInput(field) {
+  var cap    = field.charAt(0).toUpperCase() + field.slice(1);
+  var inputEl= document.getElementById("input" + cap);
+  var cardEl = document.getElementById("card" + cap);
+  var errEl  = document.getElementById("err"   + cap);
+  var val    = inputEl.value.trim();
+
+  if (val.length > 0) {
+    cardEl.classList.add("filled"); cardEl.classList.remove("error");
+    errEl.classList.remove("show"); inputEl.classList.remove("has-error");
+  } else {
+    cardEl.classList.remove("filled");
+  }
+  updateProgress();
+  updateSubmitBtn();
+}
+
+// ============================================================
+// VALIDASI
+// ============================================================
+function validateAll(showErr) {
+  var ok = true;
+  var fields = ["nama", "status", "keterangan"];
+  fields.forEach(function(f) {
+    var cap  = f.charAt(0).toUpperCase() + f.slice(1);
+    var val  = document.getElementById("input" + cap).value.trim();
+    if (!val) {
+      ok = false;
+      if (showErr) {
+        document.getElementById("card"  + cap).classList.add("error");
+        document.getElementById("err"   + cap).classList.add("show");
+        document.getElementById("input" + cap).classList.add("has-error");
+      }
+    }
+  });
+  return ok;
+}
+
+// ============================================================
+// PROGRESS
+// ============================================================
+function countFilled() {
+  var n = 0;
+  if (document.getElementById("inputNama").value.trim())        n++;
+  if (document.getElementById("inputStatus").value.trim())      n++;
+  if (document.getElementById("inputKeterangan").value.trim())  n++;
+  return n;
+}
+
+function updateProgress() {
+  var n = countFilled();
+  document.getElementById("progressCount").textContent = n + " / 3";
+  document.getElementById("progressFill").style.width  = (n / 3 * 100) + "%";
+}
+
+function updateSubmitBtn() {
+  var ok   = countFilled() === 3;
+  var btn  = document.getElementById("submitBtn");
+  var hint = document.getElementById("submitHint");
+  btn.disabled = !ok;
+  if (ok) {
+    hint.textContent = "Data lengkap. Siap menyimpan!";
+    hint.style.color = "#1A8A5A";
+  } else {
+    hint.textContent = "Lengkapi " + (3 - countFilled()) + " isian lagi untuk menyimpan";
+    hint.style.color = "var(--text-muted)";
+  }
+}
+
+// ============================================================
+// SUBMIT
+// ============================================================
+function submitForm() {
+  if (isSubmitting) return;
+  if (!validateAll(true)) { showToast("Periksa kembali isian yang belum lengkap", "error"); return; }
+
+  // Kunci tombol SEKARANG
+  isSubmitting = true;
+  document.getElementById("submitBtn").disabled      = true;
+  document.getElementById("spinner").style.display   = "block";
+  document.getElementById("submitLabel").textContent  = "Menyimpan...";
+
+  var now     = new Date();
+  var days    = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+  var months  = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+  var dateStr = days[now.getDay()] + ", " + now.getDate() + " " + months[now.getMonth()] + " " + now.getFullYear();
+  var hh = String(now.getHours()).padStart(2,"0");
+  var mm = String(now.getMinutes()).padStart(2,"0");
+  var ss = String(now.getSeconds()).padStart(2,"0");
+  var timestamp = dateStr + " " + hh + ":" + mm + ":" + ss;
+
+  var nama       = document.getElementById("inputNama").value.trim();
+  var status     = document.getElementById("inputStatus").value.trim();
+  var keterangan = document.getElementById("inputKeterangan").value.trim();
+
+  var payload = new URLSearchParams({
+    timestamp:  timestamp,
+    nama:       nama,
+    status:     status,
+    keterangan: keterangan
+  });
+
+  fetch(SHEET_URL, { method: "POST", body: payload })
+    .then(function(res) {
+      if (!res.ok) { throw new Error("HTTP " + res.status); }
+      return res.text();
+    })
+    .then(function(text) {
+      var data;
+      try { data = JSON.parse(text); } catch(e) { throw new Error("Response tidak valid"); }
+      if (data.status === "ok") {
+        showSuccess({ timestamp: timestamp, nama: nama, status: status, keterangan: keterangan }, data.no);
+      } else {
+        throw new Error(data.message || "Gagal menyimpan");
+      }
+    })
+    .catch(function(err) {
+      console.error(err);
+      showToast("Gagal menyimpan. Periksa koneksi & coba lagi.", "error");
+      resetSubmitBtn();
+    });
+}
+
+// ============================================================
+// SUCCESS
+// ============================================================
+function showSuccess(p, no) {
+  var rows = [
+    { label: "No. Pasien",   val: "#" + String(no).padStart(4, "0"), hl: true },
+    { label: "Waktu",        val: p.timestamp },
+    { label: "Nama Pasien",  val: p.nama, hl: true },
+    { label: "Status",       val: p.status },
+    { label: "Keterangan",   val: p.keterangan }
+  ];
+  document.getElementById("successDetail").innerHTML = rows.map(function(r) {
+    return '<div class="success-row' + (r.hl ? " hl" : "") + '">' +
+      '<span class="success-row-label">' + r.label + '</span>' +
+      '<span class="success-row-val">'   + r.val   + '</span></div>';
+  }).join("");
+
+  document.getElementById("formView").style.display    = "none";
+  document.getElementById("successView").style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  showToast("Data pasien berhasil disimpan!", "success");
+}
+
+// ============================================================
+// RESET
+// ============================================================
+function resetForm() {
+  isSubmitting = false;
+  ["inputNama","inputStatus","inputKeterangan"].forEach(function(id) {
+    document.getElementById(id).value = "";
+  });
+  ["cardNama","cardStatus","cardKeterangan"].forEach(function(id) {
+    document.getElementById(id).classList.remove("filled","error","focused");
+  });
+  ["errNama","errStatus","errKeterangan"].forEach(function(id) {
+    document.getElementById(id).classList.remove("show");
+  });
+  ["inputNama","inputStatus","inputKeterangan"].forEach(function(id) {
+    document.getElementById(id).classList.remove("has-error");
+  });
+  document.getElementById("spinner").style.display   = "none";
+  document.getElementById("submitLabel").textContent  = "Simpan Data Pasien \u{1F979}";
+  document.getElementById("successView").style.display = "none";
+  document.getElementById("formView").style.display    = "block";
+  updateProgress(); updateSubmitBtn();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function resetSubmitBtn() {
+  isSubmitting = false;
+  document.getElementById("spinner").style.display   = "none";
+  document.getElementById("submitLabel").textContent  = "Simpan Data Pasien \u{1F979}";
+  document.getElementById("submitBtn").disabled       = countFilled() < 3;
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, type) {
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast show" + (type === "error" ? " error" : type === "success" ? " success" : "");
+  setTimeout(function() { t.className = "toast" + (type === "error" ? " error" : type === "success" ? " success" : ""); }, 3500);
+}
+
+// ── Expose ke window ──
+window.onInput        = onInput;
+window.setFocused     = setFocused;
+window.clearFocused   = clearFocused;
+window.submitForm     = submitForm;
+window.resetForm      = resetForm;
+
+updateProgress();
+updateSubmitBtn();
+/* ]]> */
+</script>
+</body>
+</html>
